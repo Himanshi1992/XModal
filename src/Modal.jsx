@@ -1,23 +1,33 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Modal.css';
 
+function Modal() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalContentRef = useRef(null);
 
-function Modal(){
-    const[isModalOpen, setIsModalOpen] = useState(false);
-    const modalRef = useRef(null);
-    const [formData, setFormData] = useState({
-        username: '', email: '', phone: '', dob: ''
-    });
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    phone: '',
+    dob: ''
+  });
 
-   useEffect(() => {
-    const handleClick = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        modalContentRef.current &&
+        !modalContentRef.current.contains(event.target)
+      ) {
         setIsModalOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClick);
+
+    if (isModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
     return () => {
-      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isModalOpen]);
 
@@ -64,8 +74,8 @@ function Modal(){
       )}
 
       {isModalOpen && (
-        <div className="modal" ref={modalRef}>
-          <div className="modal-content">
+        <div className="modal">
+          <div className="modal-content" ref={modalContentRef}>
             <form onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="username">Username:</label>
@@ -103,7 +113,9 @@ function Modal(){
                   onChange={handleChange}
                 />
               </div>
-              <button type="submit" className="submit-button">Submit</button>
+              <button type="submit" className="submit-button">
+                Submit
+              </button>
             </form>
           </div>
         </div>
